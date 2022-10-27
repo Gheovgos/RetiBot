@@ -1,2 +1,2 @@
-# RetiBot
-PEPPE ACCIRT
+# Bot Tattici Nucleari
+Waiting for input..
