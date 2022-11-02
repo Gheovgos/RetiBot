@@ -10,6 +10,7 @@ checkConnectionPort = 23000
 def checkConnection():
     checkSocket = socket(AF_INET, SOCK_STREAM)
     checkSocket.connect(('localhost', checkConnectionPort))
+    checkSocket.settimeout(3)
     while True:
         message = checkSocket.recv(1).decode()
         if message != '0':
