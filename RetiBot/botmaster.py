@@ -2,22 +2,26 @@ from socket import *
 import threading
 import time
 
-
-def checkConnection(connectionSocket):
+checkConnectionPort = 23000
+def checkConnection():
+    checkSocket = socket(AF_INET, SOCK_STREAM)
+    checkSocket.bind(('localhost', checkConnectionPort))
+    checkSocket.listen(1)
+    checkSocketConnection, checkAddr = checkSocket.accept()
     while True:
-        print(connectionSocket)
-        time.sleep(60)
+        checkSocketConnection.send('0'.encode())
+        time.sleep(5)
 
 
 serverPort = 12000
 serverSocket = socket(AF_INET, SOCK_STREAM)                       #AF_INET = IPV4; SOCK_STREAM = TCP
 serverSocket.bind(('localhost', serverPort))
 serverSocket.listen(1)
+threadCheckConnection = threading.Thread(target=checkConnection, args=())   #dichiarato il thread che ha come target la funzione checkConnection e come argomento da passare connectionSocket
+threadCheckConnection.start()
 print('The server is ready to receive')
 connectionSocket, addr = serverSocket.accept()
 print('Accepted a new client', addr)
-threadCheckConnection = threading.Thread(target=checkConnection, args=(connectionSocket,))   #dichiarato il thread che ha come target la funzione checkConnection e come argomento da passare connectionSocket
-threadCheckConnection.start()
 infoBot = connectionSocket.recv(4096).decode()
 print('Informazioni ottenute: \n', infoBot)
 connectionSocket.send('ok'.encode())
