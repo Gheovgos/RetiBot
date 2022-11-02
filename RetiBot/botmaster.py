@@ -6,9 +6,9 @@ checkConnectionPort = 23000
 def checkConnection():
     checkSocket = socket(AF_INET, SOCK_STREAM)
     checkSocket.bind(('localhost', checkConnectionPort))
-    checkSocket.settimeout(3)
     checkSocket.listen(1)
     checkSocketConnection, checkAddr = checkSocket.accept()
+    checkSocket.settimeout(3)
     while True:
         checkSocketConnection.send('0'.encode())
         time.sleep(5)
