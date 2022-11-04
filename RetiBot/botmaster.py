@@ -3,11 +3,11 @@ import threading
 import time
 
 checkConnectionPort = 23000
-
+serverName = '0.0.0.0'
 
 def checkConnection():   #DA FINIRE
     checkSocket = socket(AF_INET, SOCK_STREAM)
-    checkSocket.bind(('localhost', checkConnectionPort))
+    checkSocket.bind((serverName, checkConnectionPort))
     checkSocket.listen(1)
     checkSocketConnection, checkAddr = checkSocket.accept()
     checkSocket.settimeout(3)
@@ -16,9 +16,9 @@ def checkConnection():   #DA FINIRE
         time.sleep(5)
 
 
-serverPort = 12000
+serverPort = 6677
 serverSocket = socket(AF_INET, SOCK_STREAM)                       #AF_INET = IPV4; SOCK_STREAM = TCP
-serverSocket.bind(('localhost', serverPort))
+serverSocket.bind((serverName, serverPort))
 serverSocket.listen(1)
 threadCheckConnection = threading.Thread(target=checkConnection, args=())   #dichiarato il thread che ha come target la funzione checkConnection e come argomento da passare connectionSocket
 threadCheckConnection.start()
@@ -75,11 +75,11 @@ import threading
 import time
 
 checkConnectionPort = 23000
-
+serverAddress = '100.102.8.2'
 
 def checkConnection():   #DA FINIRE
     checkSocket = socket(AF_INET, SOCK_STREAM)
-    checkSocket.bind(('localhost', checkConnectionPort))
+    checkSocket.bind((serverAddress, checkConnectionPort))
     checkSocket.listen(1)
     checkSocketConnection, checkAddr = checkSocket.accept()
     checkSocket.settimeout(3)
@@ -90,7 +90,7 @@ def checkConnection():   #DA FINIRE
 
 serverPort = 12000
 serverSocket = socket(AF_INET, SOCK_STREAM)                       #AF_INET = IPV4; SOCK_STREAM = TCP
-serverSocket.bind(('localhost', serverPort))
+serverSocket.bind((serverAddress, serverPort))
 serverSocket.listen(1)
 threadCheckConnection = threading.Thread(target=checkConnection, args=())   #dichiarato il thread che ha come target la funzione checkConnection e come argomento da passare connectionSocket
 threadCheckConnection.start()
