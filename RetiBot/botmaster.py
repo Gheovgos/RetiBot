@@ -13,6 +13,9 @@ def checkConnection():   #DA FINIRE
     checkSocket.settimeout(3)
     while True:
         checkSocketConnection.send('0'.encode())
+        message = checkSocketConnection.recv(1).decode()
+        if message != '0':
+            raise Exception("Opps!!!")
         time.sleep(5)
 
 

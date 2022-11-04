@@ -18,6 +18,7 @@ def checkConnection():
         message = checkSocket.recv(1).decode()
         if message != '0':
             raise Exception("Opps!!!")
+        checkSocket.send('0'.encode())
         time.sleep(5)
 
 
