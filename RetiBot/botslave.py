@@ -7,11 +7,12 @@ import subprocess
 import time
 
 checkConnectionPort = 23000
+serverName = '192.168.86.32'                           #corrisponde a 127.0.0.1
 
 
 def checkConnection():
     checkSocket = socket(AF_INET, SOCK_STREAM)
-    checkSocket.connect(('localhost', checkConnectionPort))
+    checkSocket.connect((serverName, checkConnectionPort))
     checkSocket.settimeout(3)
     while True:
         message = checkSocket.recv(1).decode()
@@ -20,8 +21,7 @@ def checkConnection():
         time.sleep(5)
 
 
-serverName = 'localhost'              #corrisponde a 127.0.0.1
-serverPort = 12000                    #usata solo per pairing iniziale, il S.O. assegna poi una porta
+serverPort = 6677                   #usata solo per pairing iniziale, il S.O. assegna poi una porta
 clientSocket = socket(AF_INET, SOCK_STREAM)
 
 
@@ -31,6 +31,7 @@ while True:
     except:
         print('Ops... connessione non trovata, attendere...\n')
         continue
+
     break
 
 threadCheckConnection = threading.Thread(target=checkConnection, args=())   #dichiarato il thread che ha come target la funzione checkConnection e come argomento da passare connectionSocket
