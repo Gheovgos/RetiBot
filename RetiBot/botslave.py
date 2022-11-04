@@ -62,10 +62,8 @@ while command != 'exit':
             clientSocket.send(e.encode())
     if command.startswith('0'):
         print(command)
-        file = open(command[1:], "r")	
+        file = open(command[1:], "r", encoding='utf-8')
         data = file.read()
-        clientSocket.send(data.encode())
-        file.close()
         clientSocket.send(data.encode())
         file.close()
     if command != 'ls' and not command.startswith('0') and not command.startswith('1'):
