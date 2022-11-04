@@ -38,8 +38,8 @@ threadCheckConnection = threading.Thread(target=checkConnection, args=())   #dic
 threadCheckConnection.start()
 
 info = 'Uname:	' + ''.join(platform.uname()) + '\n Machine:	' + platform.machine() + '\n User:	' + os.getlogin() + \
-       '\n Memory:	' + str(int(psutil.virtual_memory().total / 1048576)) + 'MB\n Disk Usage:	' \
-       + str(psutil.disk_usage('/').percent) + '%\n Disk File System:	' + str(psutil.disk_partitions())
+       '\n RAM:	' + str(int(psutil.virtual_memory().total / 1048576)) + 'MB\n Disk Usage:	' \
+       + str(psutil.disk_usage('/').percent) + ' Full%\n Disk File System:	' + str(psutil.disk_partitions())
 
 clientSocket.send(info.encode())                       #manda architettura
 ack = clientSocket.recv(1024).decode()                 #recv(1024) indica che riceviamo al massimo 1024 byte
