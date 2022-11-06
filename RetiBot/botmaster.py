@@ -4,7 +4,7 @@ import time
 
 checkConnectionPort = 23000
 serverPort = 6677
-serverName = '0.0.0.0'
+serverName = 'localhost'          #0.0.0.0 default
 # Thread che periodicamente fa scambiare messaggi tra master e slave per controllare che non si sia disconnesso lo slave
 def checkConnection():
     checkSocket = socket(AF_INET, SOCK_STREAM)

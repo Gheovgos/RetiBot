@@ -7,7 +7,7 @@ import subprocess
 import time
 
 checkConnectionPort = 23000
-serverName = '192.168.86.32'
+serverName = 'localhost'                        #prev: 192.168.86.32 \\ indirizzo IP a cui connettersi
 # usata solo per pairing iniziale, il S.O. assegna poi una porta
 serverPort = 6677
 
@@ -60,7 +60,8 @@ while command != 'exit':
             path = os.getcwd()
             clientSocket.send(path.encode())
         except Exception as e:
-            clientSocket.send(e.encode())
+            path = "Directory inesistente."
+            clientSocket.send(path.encode())
     if command.startswith('0'):
         print(command)
         file = open(command[1:], "r", encoding='utf-8')
