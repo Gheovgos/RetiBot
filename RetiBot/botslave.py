@@ -59,7 +59,7 @@ while command != 'exit':
                 os.chdir(os.path.normpath(os.getcwd() + os.sep + os.pardir))
             path = os.getcwd()
             clientSocket.send(path.encode())
-        except Exception as e:
+        except OSError:
             path = "Directory inesistente."
             clientSocket.send(path.encode())
     if command.startswith('0'):

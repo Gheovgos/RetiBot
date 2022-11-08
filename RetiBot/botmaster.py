@@ -53,9 +53,10 @@ while True:
                 break
 
             if command.startswith('cd') and command[1:].strip():
-                string = '1'+command.split(" ")[1]
-                connectionSocket.send(string.encode())
-                print('New path:	', connectionSocket.recv(1024).decode())
+                if len(command) != 2:
+                    string = '1'+command.split(" ")[1]
+                    connectionSocket.send(string.encode())
+                    print('New path:	', connectionSocket.recv(1024).decode())
 
             if command.startswith('get') and command[1:].strip():
                 string = '0'+command.split(" ")[1]
