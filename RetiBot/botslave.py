@@ -7,11 +7,9 @@ import subprocess
 import time
 
 checkConnectionPort = 23000
-# prev: 192.168.86.32 \\ indirizzo IP a cui connettersi
-serverName = 'localhost'
+serverName = 'localhost'                        #prev: 192.168.86.32 \\ indirizzo IP a cui connettersi
 # usata solo per pairing iniziale, il S.O. assegna poi una porta
 serverPort = 6677
-
 
 def checkConnection():
     checkSocket = socket(AF_INET, SOCK_STREAM)
@@ -22,10 +20,12 @@ def checkConnection():
         if message != '0':
             raise Exception("Opps!!!")
         checkSocket.send('0'.encode())
-        time.sleep(2)
+        time.sleep(5)
 
 
 clientSocket = socket(AF_INET, SOCK_STREAM)
+
+
 while True:
     try:
         clientSocket.connect((serverName, serverPort))
