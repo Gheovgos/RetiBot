@@ -72,7 +72,6 @@ while True:
                     string = '1'+command.split(" ")[1]
                     connectionSocket.send(string.encode())
                     print('New path:	', connectionSocket.recv(90000000).decode())
-
             if command.startswith('get') and len(command) > 3:
                 string = '0'+command.split(" ")[1]
                 connectionSocket.send(string.encode())
@@ -90,7 +89,6 @@ while True:
                 connectionSocket.send(command.encode())
                 out = connectionSocket.recv(1024).decode()
                 print(out)
-        print("Connessione chiusa")
         connectionSocket.close()
         break
     except Exception as e:
