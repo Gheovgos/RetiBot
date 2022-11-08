@@ -1,7 +1,13 @@
 # Bot Tattici Nucleari
 L’elaborato consiste in un applicazione client/server
+
+
     o Che usa le socket.
+    
+    
     o Che è in grado di lavorare su macchine diverse.
+    
+    
     o In cui uno dei due componenti (il bot) raccoglie informazioni sulla macchina su cui è
       eseguito e invia tali informazioni all’altro componente (il bot master).
    
