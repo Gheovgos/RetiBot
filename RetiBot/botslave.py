@@ -1,5 +1,8 @@
 import getpass
+import re
+import socket
 import threading
+import uuid
 from socket import *
 import platform
 import os
@@ -7,6 +10,19 @@ import psutil
 import subprocess
 import time
 
+
+def get_size(bytes, suffix="B"):
+    """
+    Scale bytes to its proper format
+    e.g:
+        1253656 => '1.20MB'
+        1253656678 => '1.17GB'
+    """
+    factor = 1024
+    for unit in ["", "K", "M", "G", "T", "P"]:
+        if bytes < factor:
+            return f"{bytes:.2f}{unit}{suffix}"
+        bytes /= factor
 checkConnectionPort = 23000
 # indirizzo IP a cui connettersi
 serverName = 'localhost'
@@ -42,16 +58,41 @@ while True:
 threadCheckConnection = threading.Thread(target=checkConnection, args=())
 threadCheckConnection.start()
 node = platform.node()
+release = platform.release()
+ipaddr = gethostbyname(gethostname())
+macaddr = ':'.join(re.findall('..', '%012x' % uuid.getnode()))
 version = platform.version()
 processor = platform.processor()
+cores = psutil.cpu_count(logical=False)
+threads = psutil.cpu_count(logical=True)
+partitions = psutil.disk_partitions()
+diskinfo = ''
+for partition in partitions:
+    diskinfo += " Device: " + partition.device + "\n"
+    diskinfo += " Mountpoint: " + partition.mountpoint + "\n"
+    diskinfo += " File system type: " + partition.fstype + "\n"
+    try:
+        partition_usage = psutil.disk_usage(partition.mountpoint)
+    except PermissionError:
+# this can be catched due to the disk that
+# isn't ready
+        continue
+    diskinfo += " Total Size: " + get_size(partition_usage.total) + "\n"
+    diskinfo += " Used: " + get_size(partition_usage.used) + "\n"
+    diskinfo += " Free: " + get_size(partition_usage.free) + "\n"
+    diskinfo += " Percentage: " + str(partition_usage.percent) + "%\n"
 info = 'System: ' + platform.system()
 info += '\nOS Version: ' + version
+info += '\nRelease: ' + release
 info += '\nMachine name: ' + node
 info += '\nProcessor: ' + processor
+info += '\nCores: ' + str(cores)
+info += '\nThreads: ' + str(threads)
 info += '\nUser: ' + getpass.getuser()
-info += '\nRAM: ' + str(int(psutil.virtual_memory().total / 1048576)) + 'MB'
-info += '\nMain Disk Usage: ' + str(psutil.disk_usage('/').percent) + '% Full'
-info += '\nDisk File System: ' + str(psutil.disk_partitions())
+info += '\nIP Address: ' + ipaddr
+info += '\nMAC Address: ' + macaddr
+info += '\nRAM: ' + str(int(psutil.virtual_memory().total / 1024.0 ** 3)) + 'GB'
+info += '\nDisk info: ' + diskinfo
 
 clientSocket.send(info.encode())
 ack = clientSocket.recv(1024).decode()
