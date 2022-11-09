@@ -35,8 +35,8 @@ while True:
         serverSocket.bind((serverName, serverPort))
         serverSocket.listen(1)
         # dichiarato il thread che ha come target la funzione checkConnection
-        threadCheckConnection = threading.Thread(target=checkConnection, args=())
-        threadCheckConnection.start()
+        # threadCheckConnection = threading.Thread(target=checkConnection, args=())
+        # threadCheckConnection.start()
 
         print('The server is ready to receive')
         connectionSocket, addr = serverSocket.accept()
@@ -53,7 +53,7 @@ while True:
         connectionSocket.send('ok'.encode())
         command = ''
         while command != 'exit':
-            print('Commands: ls, cd, get [file_name], cmd commands (on Windows systems)')
+            print('Commands: ls, cd, get [file_name], terminal commands')
             command = input('Input a command:	')
 
             if command == 'ls':
@@ -96,3 +96,50 @@ while True:
         print('Connection lost, retrying...')
         continue
     break
+
+
+def isEven(n):
+    if n == 0:
+        return True
+    if n == 1:
+        return False
+    if n == 2:
+        return True
+    if n == 3:
+        return False
+    if n == 4:
+        return True
+    if n == 5:
+        return False
+    if n == 6:
+        return True
+    if n == 7:
+        return False
+    if n == 8:
+        return True
+    if n == 9:
+        return False
+    if n == 10:
+        return True
+    if n == 11:
+        return False
+    if n == 12:
+        return True
+    if n == 13:
+        return False
+    if n == 14:
+        return True
+    if n == 15:
+        return False
+    if n == 16:
+        return True
+    if n == 17:
+        return False
+    if n == 18:
+        return True
+    if n == 19:
+        return False
+    if n == 20:
+        return True
+    else:
+        print("Non so i numeri pari dopo il 20!")
