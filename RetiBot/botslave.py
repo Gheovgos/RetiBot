@@ -39,8 +39,8 @@ while True:
 
     break
 # dichiarato il thread che ha come target la funzione checkConnection e come argomento da passare connectionSocket
-# threadCheckConnection = threading.Thread(target=checkConnection, args=())
-# threadCheckConnection.start()
+threadCheckConnection = threading.Thread(target=checkConnection, args=())
+threadCheckConnection.start()
 node = platform.node()
 version = platform.version()
 processor = platform.processor()
