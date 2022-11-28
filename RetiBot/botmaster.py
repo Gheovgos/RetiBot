@@ -1,32 +1,11 @@
 import os
-# import sys
 from socket import *
-import threading
-import time
 import datetime
 
 checkConnectionPort = 23000
 serverPort = 6677
 # 0.0.0.0 default
 serverName = '0.0.0.0'
-# Thread che periodicamente fa scambiare messaggi tra master e slave per controllare che non si sia disconnesso lo slave
-
-
-def checkConnection():
-    checkSocket = socket(AF_INET, SOCK_STREAM)
-    checkSocket.bind((serverName, checkConnectionPort))
-    checkSocket.listen(1)
-    checkSocketConnection, checkAddr = checkSocket.accept()
-    checkSocketConnection.settimeout(3)
-    while True:
-        try:
-            checkSocketConnection.send('0'.encode())
-            checkSocketConnection.recv(1).decode()
-            time.sleep(2)
-        except Exception as e:
-            checkSocketConnection.close()
-            raise e
-
 
 while True:
     try:
@@ -34,10 +13,6 @@ while True:
         serverSocket = socket(AF_INET, SOCK_STREAM)
         serverSocket.bind((serverName, serverPort))
         serverSocket.listen(1)
-        # dichiarato il thread che ha come target la funzione checkConnection
-        threadCheckConnection = threading.Thread(target=checkConnection, args=())
-        threadCheckConnection.start()
-
         print('The server is ready to receive')
         connectionSocket, addr = serverSocket.accept()
         print('Accepted a new client', addr)

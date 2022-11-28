@@ -1,6 +1,5 @@
 import getpass
 import re
-import socket
 import threading
 import uuid
 from socket import *
@@ -8,7 +7,6 @@ import platform
 import os
 import psutil
 import subprocess
-import time
 
 
 def get_size(bytes, suffix="B"):
@@ -23,28 +21,13 @@ def get_size(bytes, suffix="B"):
         if bytes < factor:
             return f"{bytes:.2f}{unit}{suffix}"
         bytes /= factor
+
+
 checkConnectionPort = 23000
 # indirizzo IP a cui connettersi
-serverName = 'localhost'
+serverName = '192.168.43.141'
 # usata solo per pairing iniziale, il S.O. assegna poi una porta
 serverPort = 6677
-
-
-def checkConnection():
-    checkSocket = socket(AF_INET, SOCK_STREAM)
-    checkSocket.connect((serverName, checkConnectionPort))
-    checkSocket.settimeout(3)
-    while True:
-        try:
-            checkSocket.recv(1).decode()
-            checkSocket.send('0'.encode())
-            time.sleep(2)
-        except Exception as e:
-            print(e)
-            checkSocket.close()
-            raise e
-
-
 clientSocket = socket(AF_INET, SOCK_STREAM)
 while True:
     try:
@@ -54,9 +37,6 @@ while True:
         continue
 
     break
-# dichiarato il thread che ha come target la funzione checkConnection e come argomento da passare connectionSocket
-threadCheckConnection = threading.Thread(target=checkConnection, args=())
-threadCheckConnection.start()
 node = platform.node()
 release = platform.release()
 ipaddr = gethostbyname(gethostname())
@@ -74,8 +54,8 @@ for partition in partitions:
     try:
         partition_usage = psutil.disk_usage(partition.mountpoint)
     except PermissionError:
-# this can be catched due to the disk that
-# isn't ready
+        # this can be catched due to the disk that
+        # isn't ready
         continue
     diskinfo += " Total Size: " + get_size(partition_usage.total) + "\n"
     diskinfo += " Used: " + get_size(partition_usage.used) + "\n"
