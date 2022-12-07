@@ -2,7 +2,6 @@ import os
 from socket import *
 import datetime
 
-checkConnectionPort = 23000
 serverPort = 6677
 # 0.0.0.0 default
 serverName = '0.0.0.0'
