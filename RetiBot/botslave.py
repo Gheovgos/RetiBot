@@ -23,20 +23,19 @@ def get_size(bytes, suffix="B"):
         bytes /= factor
 
 
-checkConnectionPort = 23000
 # indirizzo IP a cui connettersi
-serverName = '192.168.43.141'
+serverName = '192.168.158.93'
 # usata solo per pairing iniziale, il S.O. assegna poi una porta
 serverPort = 6677
 clientSocket = socket(AF_INET, SOCK_STREAM)
-while True:
+connectionEstablished = False
+while not connectionEstablished:
     try:
         clientSocket.connect((serverName, serverPort))
+        connectionEstablished = True
     except:
         print('Ops... connessione non trovata, attendere...\n')
-        continue
 
-    break
 node = platform.node()
 release = platform.release()
 ipaddr = gethostbyname(gethostname())
