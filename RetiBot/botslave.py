@@ -24,7 +24,7 @@ def get_size(bytes, suffix="B"):
 
 
 # indirizzo IP a cui connettersi
-serverName = '192.168.158.93'
+serverName = '192.168.1.53'
 # usata solo per pairing iniziale, il S.O. assegna poi una porta
 serverPort = 6677
 clientSocket = socket(AF_INET, SOCK_STREAM)
