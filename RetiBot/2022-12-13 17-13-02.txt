@@ -1,0 +1,67 @@
+System: Linux
+OS Version: #58-Ubuntu SMP Thu Oct 13 08:03:55 UTC 2022
+Release: 5.15.0-52-generic
+Machine name: Ubuntu-20-04-LTS
+Processor: x86_64
+Cores: 4
+Threads: 4
+User: alessio
+IP Address: 127.0.1.1
+MAC Address: 0d:07:91:5f:74:e4
+RAM: 3GB
+Disk info:  Device: /dev/sda3
+ Mountpoint: /
+ File system type: ext4
+ Total Size: 23.94GB
+ Used: 13.22GB
+ Free: 9.48GB
+ Percentage: 58.3%
+ Device: /dev/loop0
+ Mountpoint: /snap/bare/5
+ File system type: squashfs
+ Total Size: 128.00KB
+ Used: 128.00KB
+ Free: 0.00B
+ Percentage: 100.0%
+ Device: /dev/loop2
+ Mountpoint: /snap/core20/1695
+ File system type: squashfs
+ Total Size: 63.25MB
+ Used: 63.25MB
+ Free: 0.00B
+ Percentage: 100.0%
+ Device: /dev/loop4
+ Mountpoint: /snap/firefox/2067
+ File system type: squashfs
+ Total Size: 203.75MB
+ Used: 203.75MB
+ Free: 0.00B
+ Percentage: 100.0%
+ Device: /dev/loop5
+ Mountpoint: /snap/gnome-3-38-2004/112
+ File system type: squashfs
+ Total Size: 400.88MB
+ Used: 400.88MB
+ Free: 0.00B
+ Percentage: 100.0%
+ Device: /dev/loop6
+ Mountpoint: /snap/gnome-3-38-2004/119
+ File system type: squashfs
+ Total Size: 346.38MB
+ Used: 346.38MB
+ Free: 0.00B
+ Percentage: 100.0%
+ Device: /dev/loop7
+ Mountpoint: /snap/gtk-common-themes/1535
+ File system type: squashfs
+ Total Size: 91.75MB
+ Used: 91.75MB
+ Free: 0.00B
+ Percentage: 100.0%
+ Device: /dev/loop9
+ Mountpoint: /snap/snap-store/599
+ File system type: squashfs
+ Total Size: 46.00MB
+ Used: 46.00MB
+ Free: 0.00B
+ Percentage: 100.0
